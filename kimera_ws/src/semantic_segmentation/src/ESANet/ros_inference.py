@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 import sys
+# sys.path.insert(0, '/home/esoptron/anaconda3/lib/python3.7/site-packages')
+# print(sys.path)
+
 import argparse
 
 import rospy

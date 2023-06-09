@@ -88,7 +88,7 @@ std::string find_name_by_label(int label, std::map<std::string, ColorLabel> colo
 
 int main() {
 
-    std::string base_path = "";
+    std::string base_path = "/home/esoptron/dev/semantic_mapping/scripts/pointcloud_confusion/data/";
     std::string gt_path = base_path + "gt_semantic_mesh.ply";
     std::string src_path = base_path + "gt_pose_maskrcnn.ply";
     std::string labels_path = base_path + "sunrgbd_13_segmentation_mapping.csv";

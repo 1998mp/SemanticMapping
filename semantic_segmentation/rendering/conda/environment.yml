@@ -317,4 +317,4 @@ dependencies:
     - pyopengl==3.1.0
     - pyrender==0.1.45
     - trimesh==3.9.10
-prefix: /home/RozDavid/anaconda3/envs/pyrender
+prefix: /home/esoptron/anaconda3/envs/pyrender

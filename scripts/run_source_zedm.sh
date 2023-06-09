@@ -5,4 +5,5 @@ roslaunch \
 	camera_name:=${HOSTNAME} \
 	node_name:=${HOSTNAME}_zed_node \
 	camera_model:=zedm \
-	base_frame:=${HOSTNAME}_link
+	base_frame:=${HOSTNAME}_link \
+	openni_depth_mode:=1

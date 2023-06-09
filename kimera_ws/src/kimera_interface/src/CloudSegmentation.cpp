@@ -156,7 +156,7 @@ void CloudSegmentation::processCloud() {
 void CloudSegmentation::loadParams() {
 
     //Reading the params
-    std::string label2color_path = "";
+    std::string label2color_path = "/home/esoptron/dev/semantic_mapping/kimera_ws/src/kimera_interface/cfg/sunrgbd_37_segmentation_mapping.csv";
     nh_private.param("label2color_mapping_path", label2color_mapping_path_, label2color_path);
 
     std::string pointcloud_topic = "/cloud_pcd";
@@ -303,6 +303,11 @@ void CloudSegmentation::segmentCloud(pcl::PointCloud<pcl::PointXYZRGB>::Ptr filt
 
         // Compute DoN
         don.computeFeature (*don_cloud);
+
+        //DEBUG
+        // Save DoN features
+        pcl::PCDWriter writer;
+        writer.write<pcl::PointNormal> ("/home/esoptron/don_cloud.pcd", *don_cloud, false);
 
         // Build the condition for filtering
         pcl::ConditionOr<pcl::PointNormal>::Ptr range_cond (

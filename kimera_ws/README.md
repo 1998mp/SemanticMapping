@@ -19,7 +19,11 @@ sudo apt remove --autoremove nvidia-*
 ```
 sudo apt update
 sudo add-apt-repository ppa:graphics-drivers
+# The key needs to be updated in 2022 for cuda.list, but the cuda_learn.list still uses the old one.
+# key for cuda_learn.list:
 sudo apt-key adv --fetch-keys  http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub
+# key for cuda.list:
+sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/3bf863cc.pub
 sudo bash -c 'echo "deb http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64 /" > /etc/apt/sources.list.d/cuda.list'
 sudo bash -c 'echo "deb http://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64 /" > /etc/apt/sources.list.d/cuda_learn.list'
 ```
@@ -31,11 +35,8 @@ sudo apt install cuda-10-2
 sudo apt install libcudnn7
 ```
 
-4. As the last step one need to specify PATH to CUDA in ‘.profile’ file. Open the file by running:
-```
-sudo vi ~/.profile
-```
-And add the following lines at the end of the file:
+4. As the last step one need to specify PATH to CUDA in `.profile` file or in `.bashrc`. Open the file by running:
+`vi ~/.profile` or `vi ~/.bashrc` and add the following lines at the end of the file:
 ```
 # set PATH for cuda 10.2 installation
 if [ -d "/usr/local/cuda-10.2/bin/" ]; then
@@ -43,6 +44,7 @@ if [ -d "/usr/local/cuda-10.2/bin/" ]; then
     export LD_LIBRARY_PATH=/usr/local/cuda-10.2/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
 fi
 ```
+
 5. Restart and check the versions for the installation.
 
  - CUDA: `nvcc --version`
@@ -107,10 +109,21 @@ sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu `lsb_release -sc` main"
 wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
 ```
 
-Install the following packages (change 'melodic' below to your own ROS distro name if different):
-``` 
+```
 sudo apt-get update
-sudo apt-get install python-wstool python-catkin-tools protobuf-compiler autoconf
+sudo apt-get install -y --no-install-recommends apt-utils
+sudo apt-get install -y \
+      cmake build-essential unzip pkg-config autoconf protobuf-compiler\
+      libboost-all-dev \
+      libjpeg-dev libpng-dev libtiff-dev \
+      libvtk6-dev libgtk-3-dev \
+      libatlas-base-dev gfortran \
+      libparmetis-dev
+```
+
+Install the following packages (change 'melodic' below to your own ROS distro name if different):
+```
+sudo apt-get install python-wstool python-catkin-tools
 sudo apt-get install ros-melodic-cmake-modules 
 sudo apt-get install ros-melodic-image-geometry ros-melodic-pcl-ros ros-melodic-cv-bridge \
 ros-melodic-rviz-visual-tools ros-melodic-visualization-msgs ros-melodic-camera-info-manager \
@@ -118,18 +131,8 @@ ros-melodic-jsk-recognition-msgs ros-melodic-jsk-rviz-plugins ros-melodic-move-b
 ros-melodic-image-proc ros-melodic-stereo-msgs ros-melodic-tf2-bullet ros-melodic-depth-image-proc \
 ros-melodic-ddynamic-reconfigure ros-melodic-librealsense2 ros-melodic-image-transport-plugins
 ```
+(optionally, you can install `ros-melodic-desktop-full`)
 
-```
-sudo apt-get install -y --no-install-recommends apt-utils
-sudo apt-get install -y \
-      cmake build-essential unzip pkg-config autoconf \
-      libboost-all-dev \
-      libjpeg-dev libpng-dev libtiff-dev \
-      libvtk6-dev libgtk-3-dev \
-      libatlas-base-dev gfortran \
-      libparmetis-dev \
-      python-wstool python-catkin-tools \
-```
 
 
 ## Python 3 prerequisites
@@ -154,18 +157,17 @@ Create Anaconda environment with Python 3.6/3.7 (NOTE: the version matters! Pyth
 
 If you only need catkin in the environment, create the environment as follows:
 ```
-conda env create --name semantic_mapping python=3.7
+conda create --name semantic_mapping python=3.7
 conda activate semantic_mapping
-conda install -c conda-forge catkin_pkg
-conda install -c conda-forge empy pyyaml
-conda install -c conda-forge rospkg
+conda install -c conda-forge empy pyyaml numpy
+conda install -c conda-forge catkin_pkg rospkg
 conda deactivate
 ```
 
 If you want to use the semantic segmentation modules, create the environment as follows:
 ```
 cd config
-conda env create -f semantic_mapping_conda.yaml
+conda create -f semantic_mapping_conda.yaml
 conda activate semantic_mapping
 pip install cython
 pip install eigency
@@ -174,7 +176,7 @@ conda deactivate
 
 Note: The last two packages need to be installed line-by-line as they are dependent on each other, pip fails for them.
 
-It is important to completely deactivate the all environments before continuing with catkin
+It is important to completely deactivate the all environments (even `base`!) before continuing with catkin
 ```
 conda deactivate
 ```
@@ -232,18 +234,27 @@ catkin config --merge-devel
 ```
 
 Next, we set up our Python Path. Note that `anaconda3` is the _full path_ (relative paths and environment variables do not seem to work) of your conda installation folder and `semantic_mapping` is the name of our conda environment.
+
 ```
-export MY_CONDA_PATH=$HOME/dev/anaconda3 
-# or $HOME/miniconda3 or whatever you have
+export MY_CONDA_PATH=$HOME/anaconda3
+# or $HOME/dev/miniconda3 or whatever you have
 export MY_CONDA_ENV_NAME=semantic_mapping
 ```
 
-In the command below, make sure to use the correct python version (3.7 in this example)
+Next, we need to configure our catkin workspace as follows.
+ - We set C++ standard 14 and Release build by default
+ - We need to set the Python paths to our conda environment. In the command below, make sure to use the correct python version (3.7 in this example).
+ - If we use Zed camera modules, we need to set the CUDA path: `-DCUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-10.2` (make sure to use same version and path as above)
+ - Kimera-VIO asks to build GTSAM with `-DGTSAM_TANGENT_PREINTEGRATION=OFF`
 ```
-catkin config --cmake-args -DCMAKE_CXX_STANDARD=14 -DCMAKE_BUILD_TYPE=Release \
--DPYTHON_EXECUTABLE=$MY_CONDA_PATH/envs/$MY_CONDA_ENV_NAME/bin/python3 \
--DPYTHON_INCLUDE_DIR=$MY_CONDA_PATH/envs/$MY_CONDA_ENV_NAME/include/python3.7m \
--DPYTHON_LIBRARY=$MY_CONDA_PATH/envs/$MY_CONDA_ENV_NAME/lib/libpython3.7m.so
+catkin config --cmake-args \
+  -DCMAKE_CXX_STANDARD=14 \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DPYTHON_EXECUTABLE=$MY_CONDA_PATH/envs/$MY_CONDA_ENV_NAME/bin/python3 \
+  -DPYTHON_INCLUDE_DIR=$MY_CONDA_PATH/envs/$MY_CONDA_ENV_NAME/include/python3.7m \
+  -DPYTHON_LIBRARY=$MY_CONDA_PATH/envs/$MY_CONDA_ENV_NAME/lib/libpython3.7m.so \
+  -DCUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-10.2 \
+  -DGTSAM_TANGENT_PREINTEGRATION=OFF
 ```
 
 Next, we need to blacklist the Python2-related packages
@@ -320,6 +331,7 @@ cd ucoslam-open/scripts
 source run_ros_slam_zedm.sh
 ```
 ### Kinect4Azure
+TBD
 
 
 ## Kimera Mapping:
@@ -369,7 +381,27 @@ The arguments that you might need to provide as additional arguments:
 
 # Troubleshooting
 
-Random tales of suffering and solutions, so that you don't have to.
+Random tales of suffering and solutions, so that you don't need to...
+
+
+### habitat trajectory similator missing TF2 ROS python package
+This error appears when the `init_workspace.sh` is called while a conda environment is active. The ROS setup script messes up something with the paths.
+
+Make sure not to mix python2 and python3 and not mix conda environments and system environment. Deactivate all catkin workspaces and deactivate all conda environments (even `base`). Then, initialize the `kimera_ws` catkin workspace first, and activate the `habitat` conda environment second. Note that the `kimera_ws` workspace is already configured to use python3 of a specific path (see its `catkin config`), and note that the `tf2_ros` node gets (re)built with python3 within the `kimera_ws` workspace as part of the `pcl_catkin` package.
+
+
+It you mix up the python versions and try to use the default `tf2_ros` built for python2, you may see an an error message like this:
+```
+import tf2_ros
+  File "/opt/ros/melodic/lib/python2.7/dist-packages/tf2_ros/__init__.py", line 38, in <module>
+    from tf2_py import *
+  File "/opt/ros/melodic/lib/python2.7/dist-packages/tf2_py/__init__.py", line 38, in <module>
+    from ._tf2 import *
+ImportError: dynamic module does not define module export function (PyInit__tf2)
+```
+
+Read more [here](https://answers.ros.org/question/326226/importerror-dynamic-module-does-not-define-module-export-function-pyinit__tf2/)
+
 
 ### GTSAM build error
 I noticed in 2021 October that the latest gtsam master cannot be built in the workspace. I rolled back manually to an earlier commit 59d9027.
@@ -381,6 +413,13 @@ The error message was this:
  #include <gtsam/nonlinear/GncOptimizer.h>
           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 compilation terminated.
+```
+
+### Azure_kinect_ROS build error
+If you see errors with 'cv::Mat::updateContinuityFlag()` then your OpenCV version found is too old. We also include the opencv3_catkin package in the workspace, which must be built first, so that it is found by any other package that depends on it. So clean your workspace and build opencv3 before anything else:
+```
+catkin build opencv3_catkin
+catkin build
 ```
 
 
@@ -416,3 +455,22 @@ tensorflow.python.framework.errors_impl.UnknownError: 2 root error(s) found.
 
  - Make sure you have `TF_FORCE_GPU_ALLOW_GROWTH=true` in your environment variables
    - e.g. `export TF_FORCE_GPU_ALLOW_GROWTH=true` 
+
+
+### missing libEGL.so and libGL.so
+```
+make[2]: *** No rule to make target '/usr/lib/x86_64-linux-gnu/libEGL.so', needed by 'libkimera_vio.so'.  Stop.
+```
+My latest nvidia driver installation forgot to symlink the GL and EGL libraries. Make sure that they do exist under some other name, like `libGL.so.1` and then you can create symlinks manually.
+
+```
+cd /usr/lib/x86_64-linux-gnu
+sudo ln -sf libGL.so.1 libGL.so
+sudo ln -sf libEGL.so.1 libEGL.so
+```
+
+### Kimera-VIO warning about IMU preintegration in GTSAM
+Kimera-VIO want to use on-manifold preintegration instead of tangent preintegration.
+Add this to your catkin config: `-DGTSAM_TANGENT_PREINTEGRATION=OFF`
+
+

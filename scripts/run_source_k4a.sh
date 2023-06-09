@@ -11,6 +11,8 @@ roslaunch \
 	depth_unit:=16UC1 \
 	fps:=15
 
+
 # WARNING: depth in 16UC1 format is in millimeters, but depth in 32FC1 format is in meters! 
 # Make sure that the depth scale must be consistent in your pipeline.
 # see https://github.com/microsoft/Azure_Kinect_ROS_Driver/commit/ea70ccf
+

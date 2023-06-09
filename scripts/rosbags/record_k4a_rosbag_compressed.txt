@@ -1,5 +1,9 @@
-## Modifz compression to png_level 3
+## Modify compression to png_level 3 of topics depth_to_rgb/image_raw/compressedDepth and rgb/image_raw/compressed
 rosrun rqt_reconfigure rqt_reconfigure
 
-## Record compressed params
-rosbag record /tf /rgb/image_raw/compressed /rgb/camera_info /tf_static /depth_to_rgb/image_raw/compressedDepth /depth_to_rgb/camera_info /hp_laptop/ucoslam_pose
+
+## To record compressed topics with Kinect4Azure (Host esoptron_laptop):
+rosbag record /tf /rgb/image_raw/compressed /rgb/camera_info /tf_static /depth_to_rgb/image_raw/compressedDepth /depth_to_rgb/camera_info /esoptron_laptop/ucoslam_pose
+
+## To record compressed topics with Zed mini (host hp_laptop):
+rosbag record /tf /hp_laptop_zed_node/left/image_rect_color/compressed /hp_laptop_zed_node/right/image_rect_color/compressed /hp_laptop/ucoslam_pose

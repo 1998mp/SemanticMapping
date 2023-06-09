@@ -42,6 +42,8 @@ class RendererNode(object):
         self.overlayed_image_pub = rospy.Publisher(self.rendered_overlayed_topic, Image, queue_size=5)
         self.rendered_depth_pub = rospy.Publisher(self.rendered_depth_topic, Image, queue_size=5)
 
+        #self.i = 0
+
     def img_callback(self, img_msg, depth_msg):
 
         try:
@@ -74,6 +76,8 @@ class RendererNode(object):
             rendered_depth_msg = self.bridge.cv2_to_imgmsg(rendered_depth)
             rendered_depth_msg.header = img_msg.header
             self.rendered_depth_pub.publish(rendered_depth_msg)
+            #cv2.imwrite('../images/depth_' + str(self.i) + '.png', rendered_depth*255./np.max(rendered_depth))
+            #self.i += 1
 
             if self.args.visualization:
 
