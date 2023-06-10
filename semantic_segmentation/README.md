@@ -64,7 +64,7 @@ but it is enough to use the import the provided conda environment again.
 Additionally, we have to download the chekcpoints on the different models. We test with Mask-RCNN models trained on CoCo, 
 Nyu-V2 and SunRGBD datasets, but found to be the best the SunRGBD. 
 
-For running in inference mode download the checkpoints from [here](https://ikelte-my.sharepoint.com/:f:/g/personal/oicn4a_inf_elte_hu/EpjwmlEKyq1BhP65hiT13b8BzSnGnro2Z9q45WYyLP9dTA?e=El1xpH)
+For running in inference mode download the checkpoints from [here](https://nokia-my.sharepoint.com/:f:/p/david_rozenberszki/Eo2rRmYOs7xJiCMhfyZsQ2sBwgsAzCh1gVTWzvagL7DnRw?e=l0OedS)
 and save it under the models folder. 
 
 
@@ -82,6 +82,57 @@ And we can run the segmentation with
 ```
 cd <semantic_mapping_root>/scripts
 source run_maskrcnn_segmentation_<k4a,rsd,zedm>.sh
+```
+
+## Atlas - not used for now
+
+### Installation
+
+Please follow the README in the directory. 
+
+### Contributions
+
+Created a ros interface for collecting real-time and real life data
+. The goal is to save the necessary information in a structured dataset, that can be automatically read by the inference node. 
+
+This dataset recording script can be run from the same virtual environmetn that we have created jointly for `ESANet` and `kimera_ws`, previously called `rgbd_segmentation`. 
+
+A Simple visualizer for opening the created segmented meshes
+
+**Parameters and arguments**
+
+- ```--path```  Where to save the full dataset 9images and pose txt files
+- ```--path_meta``` Where to save the metadata files, the json with intrinsic and path information
+- ```--scene_name``` The unique name of the recording we make through ROS
+- ```--image_topic_name``` Colored camera images to use for Atlas defaults to `'/zedm/zed_node/rgb_raw/image_raw_color'`
+- ```--info_topic_name``` The intrinsic parameters on this camera_info topic  defaults to `'/zedm/zed_node/rgb_raw/camera_info'`
+- ```--world_frame_name``` The name of the odometry/map frame defaults to `'map'`
+- ```--pose_frame_name``` The pose of the camera (Z-up, not optical) defaults to `'zedm_left_camera_frame'`
+- ```--frame_limit``` How many images we want to record in this dataset. Defaults to: `300`
+
+
+### Running the node
+
+First, start the Zed SDK or Ucoslam with Realsense camera
+
+Then in a activated conda environment with also the kimera_ws in PATH record the data while moving the camera around
+
+```
+<kimera_ws_path> . devel/setup.bash
+<atlas_root_path> conda activate rgbd_segmentation
+<atlas_root_path> python ros_dataset_recorder.py --path data/sample --path_meta data/meta/sample --scene_name ros_data
+```
+
+Run the inference:
+
+```
+<atlas_root_path> python inference.py --model results/release/semseg/final.ckpt --scenes ./data/meta/sample/ros_data/info.json --voxel_dim 208 208 80
+```
+
+Finally, visualize the created mesh
+
+```
+<atlas_root_path> python visualize_mesh.py --mesh_path ./results/release/semseg/test_final/ros_data.ply
 ```
 
 # Rendering the labels

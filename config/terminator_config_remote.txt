@@ -1,0 +1,70 @@
+# put this content into ~/.config/terminator/config
+# start from Terminal with `terminator -l ROS_hp_laptop`
+
+[global_config]
+  suppress_multiple_term_dialog = True
+[keybindings]
+[layouts]
+  [[ROS_timon_jetson]]
+    [[[child0]]]
+      fullscreen = False
+      last_active_term = c9da7773-d664-4f2d-aa32-f3a701c81eb0
+      last_active_window = True
+      maximised = True
+      order = 0
+      parent = ""
+      position = 67:27
+      size = 1853, 1145
+      title = ""
+      type = Window
+    [[[child1]]]
+      order = 0
+      parent = child0
+      position = 924
+      ratio = 0.5
+      type = HPaned
+    [[[child2]]]
+      order = 0
+      parent = child1
+      position = 570
+      ratio = 0.5
+      type = VPaned
+    [[[child5]]]
+      order = 1
+      parent = child1
+      position = 570
+      ratio = 0.5
+      type = VPaned
+    [[[terminal3]]]
+      order = 0
+      parent = child2
+      profile = default
+      type = Terminal
+      uuid = c9da7773-d664-4f2d-aa32-f3a701c81eb0
+      command = cd ~/dev/semantic_mapping/kimera_ws; source ./devel/setup.bash; source ./scripts/remote_ros_client_setup.sh esoptron_laptop; bash
+    [[[terminal4]]]
+      order = 1
+      parent = child2
+      profile = default
+      type = Terminal
+      uuid = 8689bb1f-1d7b-44eb-9ea5-e8103be97369
+      command = cd ~/dev/semantic_mapping/kimera_ws; source ./devel/setup.bash; source ./scripts/remote_ros_client_setup.sh esoptron_laptop; bash
+    [[[terminal6]]]
+      order = 0
+      parent = child5
+      profile = default
+      type = Terminal
+      uuid = e0361a7b-3702-435f-bade-de621bc042e9
+      command = cd ~/dev/semantic_mapping/kimera_ws; source ./devel/setup.bash; source ./scripts/remote_ros_client_setup.sh esoptron_laptop; bash
+    [[[terminal7]]]
+      order = 1
+      parent = child5
+      profile = default
+      type = Terminal
+      uuid = 5ac1d952-ba30-4413-8a75-860aa673da25
+      command = cd ~/dev/semantic_mapping/kimera_ws; source ./devel/setup.bash; source ./scripts/remote_ros_client_setup.sh esoptron_laptop; bash
+[plugins]
+[profiles]
+  [[default]]
+    cursor_color = "#aaaaaa"
+

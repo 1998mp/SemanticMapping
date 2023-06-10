@@ -68,7 +68,7 @@
     <node type="rviz" name="rviz_kimera_interface" pkg="rviz" args="-d $(find kimera_interface)/rviz/kimera_habitat_metric.rviz"/>
 
     <!-- Transform optical to SLAM frame, depends on the tf frame which one to choose-->
-    <!--<node pkg="tf" type="static_transform_publisher" name="static_frame_pointcloud" args="0 0 0 0.5 -0.5 0.5 -0.5 $(arg sensor_frame) $(arg pointcloud_frame) 100"/>-->
+    <!-- <node pkg="tf" type="static_transform_publisher" name="static_frame_pointcloud" args="0 0 0 0.5 -0.5 0.5 -0.5 $(arg sensor_frame) $(arg pointcloud_frame) 100"/>-->
     <node pkg="tf" type="static_transform_publisher" name="static_frame_pointcloud" args="0 0 0 0.0 0.0 0.0 1 $(arg sensor_frame) $(arg pointcloud_frame) 100"/>
     
      <!-- Include the reconsruction pipeline-->  

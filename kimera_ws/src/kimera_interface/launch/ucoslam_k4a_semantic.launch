@@ -6,7 +6,7 @@
     <arg name="max_ray_length_m" default="5.0"/>
      
     <!-- Set ros server param according to the starting script --> 
-    <arg name="should_use_sim_time" default="true" />
+    <arg name="should_use_sim_time" default="false" />
     <param name="use_sim_time" value="$(arg should_use_sim_time)" />
     
     <!-- Play from BAG file -->

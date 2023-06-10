@@ -1,32 +1,41 @@
 #!/bin/bash
 
-cd habitat-sim/
-conda create -n habitat python=3.6 cmake=3.14.0
+# read more here: 
+# https://github.com/facebookresearch/habitat-lab
+# https://github.com/facebookresearch/habitat-sim
+# (note that if you use a specific version, then read the README.md belonging to that git tag!)
+
+export HABITAT_ROOT=$(pwd)
+
+conda create -n habitat python=3.7 cmake=3.14.0
 conda activate habitat
+
+
+cd $HABITAT_ROOT/habitat-sim
 pip install -r requirements.txt
 
-cd ../habitat-lab/
+
+cd $HABITAT_ROOT/habitat-lab
 pip install -r ./requirements.txt
-reqs=(./habitat_baselines/**/requirements.txt)
-pip install "${reqs[@]/#/-r}"
+reqs=(./habitat_baselines/**/requirements.txt) # optional
+pip install "${reqs[@]/#/-r}" # optional, takes a lot of time...
 python setup.py develop --all
-pip install . #Reinstall to trigger sys.path update
+pip install .
+# ^ Reinstall to trigger sys.path update
 
-cd ../habitat-sim/
+
+cd $HABITAT_ROOT/habitat-sim
 conda install habitat-sim -c conda-forge -c aihabitat
-# NOTE: if you want to specify exact versions, use the lines below. However, we found in November 2021 that these extra lines are not needed anymore.
-#PYTHON_VERSION="$( python -c 'import sys; print(".".join(map(str, sys.version_info[:2])))' )"
-#PIL_VERSION="$(python -c 'import PIL; print(PIL.__version__)')"
-#NUMPY_VERSION="$(python -c 'import numpy as np; print(np.__version__)')"
-#conda install -c aihabitat-nightly -c conda-forge habitat-sim  "python=${PYTHON_VERSION}" "numpy==${NUMPY_VERSION}" "pillow==${PIL_VERSION}"
 
 
-# These needed to be additionally installed for me
-pip install pycryptodomex
-pip install gnupg
-pip install rospkg
-pip install scikit-image
+# Additional dependencies for exporting from Habitat to ROS
+conda install pycryptodomex
+conda install scikit-image
+conda install -c conda-forge python-gnupg
+conda install -c conda-forge rospkg
 
-mkdir output/
 
-cd ../habitat_interface/
+mkdir -p output
+
+cd $HABITAT_ROOT/habitat_interface
+

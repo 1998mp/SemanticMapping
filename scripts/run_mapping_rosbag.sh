@@ -6,7 +6,7 @@ roslaunch \
   should_use_sim_time:=true \
   play_bag:=true \
   rosbag_rate:=0.3 \
-  bag_file:=$HOME/data/rsd_435.bag \
+  bag_file:=$HOME/data/semantic_mapping/rsd_435.bag \
   use_compressed_bag:=false \
   rgb_encoding:=raw \
   depth_encoding:=raw \

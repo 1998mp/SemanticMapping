@@ -259,4 +259,4 @@ dependencies:
     - pyrender==0.1.45
     - trimesh==3.9.12
     - typing-extensions==3.7.4.1
-prefix: /home/RozDavid/anaconda3/envs/semantic_mapping
+prefix: /home/esoptron/anaconda3/envs/semantic_mapping

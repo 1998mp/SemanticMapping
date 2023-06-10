@@ -71,7 +71,7 @@ class InteractiveSimulator(object):
         parser.add_argument('--depth_topic_name', type=str, default="/habitat/depth/image_raw",
                             help='The depth images will be saved under this topic')
         parser.add_argument('--semantic_topic_name', type=str, default='/habitat/semantics/image_raw',
-                            help='The semantic imaes will be saved under this topic')
+                            help='The semantic images will be saved under this topic')
         
         parser.add_argument('--compressed_image_topic_name', type=str, default='/habitat/rgb/image_raw/compressed',
                             help='The compressed images will be savd under this topic')
@@ -83,11 +83,11 @@ class InteractiveSimulator(object):
         parser.add_argument('--write_bag', type=bool, default=False,
                             help='To compress images saved to rosbag')
         parser.add_argument('--publish_tf', type=bool, default=True,
-                            help='To compress images saved to rosbag')
+                            help='To publish and save the TF tree')
 
-        parser.add_argument('--output_bag_name', type=str, default="../../data/output.bag",
+        parser.add_argument('--output_bag_name', type=str, default="../data/output.bag",
                             help='The name and relative path of the output bag file')
-        parser.add_argument('--output_agent_pose_name', type=str, default="../../data/agent_states.npy",
+        parser.add_argument('--output_agent_pose_name', type=str, default="../data/agent_states.npy",
                             help='The name and relative path of the output agent pose file')
         parser.add_argument('--target_fps', type=int, default=5,
                             help='The number of frames to render per second')
